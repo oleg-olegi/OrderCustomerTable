@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order and Customer Management</title>
+</head>
+<body>
+<h1>Управление заказами и клиентами</h1>
+<h2>Добавить заказчика</h2>
+<form action="/customer/create" method="post">
+    <label for="surname">Фамилия:</label>
+    <input type="text" id="surname" name="Фамилия"><br><br>
+    <label for="name">Имя:</label>
+    <input type="text" id="name" name="Имя"><br><br>
+    <label for="phone">Телефон:</label>
+    <input type="text" id="phone" name="Телефон"><br><br>
+    <button type="submit">Добавть заказчика</button>
+</form>
+
+<h2>Создать заказ</h2>
+<form action="/order/create" method="post" enctype="multipart/form-data">
+    <label for="customerId">ID заказчика:</label>
+    <input type="number" id="customerId" name="customerId"><br><br>
+    <label for="amount">Количество:</label>
+    <input type="number" id="amount" name="Количество"><br><br>
+    <label for="date">Дата дд-ММ-гггг:</label>
+    <input type="text" id="date" name="Дата заказа"><br><br>
+    <label for="link">Ссылка на товар:</label>
+    <input type="text" id="link" name="Ссылка на товар"><br><br>
+    <label for="photoData">Фото:</label>
+    <input type="file" id="photoData" name="Фото"><br><br>
+    <label for="prepaid">Предоплата:</label>
+    <input type="text" id="prepaid" name="Предоплата, руб"><br><br>
+    <label for="sumOrder">Сумма заказа:</label>
+    <input type="text" id="sumOrder" name="Сумма заказа, руб"><br><br>
+    <label for="status">Статус:</label>
+    <input type="checkbox" id="status" name="Статус заказа"><br><br>
+    <button type="submit">Создать заказ</button>
+</form>
+<h2>Получить все заказы по фамилии заказчика</h2>
+<form action="/order/get-orders" method="get">
+    <label for="surnameOfCustomer">Фамилия:</label>
+    <input type="text" id="surnameOfCustomer" name="Фамилия"><br><br>
+    <button type="submit">Получить</button>
+</form>
+<h2>Получить все заказы</h2>
+<form action="orders.html" method="get" target="_blank">
+    <button type="submit">Получить</button>
+</form>
+
+</body>
+</html>

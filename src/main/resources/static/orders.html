@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список заказов</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .zoomable-image {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .zoomable-image:hover {
+            transform: scale(2.5); /* Изменить масштаб при наведении */
+        }
+    </style>
+</head>
+<body>
+<h1>Список заказов</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Ссылка на товар</th>
+        <th>Количество</th>
+        <th>Сумма заказа</th>
+        <th>Предоплата</th>
+        <th>Фото</th>
+        <th>Дата заказа</th>
+        <th>Статус</th>
+        <th>ID заказчика</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Здесь будут данные заказов -->
+    </tbody>
+</table>
+
+<script>
+    // Получение данных заказов с сервера при загрузке страницы
+    window.addEventListener('DOMContentLoaded', () => {
+        fetch('/order/get-all-orders') // Путь к вашему серверному обработчику
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Вызов функции для отображения данных в таблице
+                displayOrders(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    });
+
+    // Функция для отображения данных заказов в таблице
+    function displayOrders(orders) {
+        const tableBody = document.querySelector('tbody');
+
+        orders.forEach(order => {
+            const row = document.createElement('tr');
+            const photoData = order.photoData;
+            const photoCell = document.createElement('td');
+
+            // Создаем изображение из строки Base64
+            const img = createImageFromBase64(photoData);
+
+            // Добавляем класс для стилизации и указываем курсор
+            img.classList.add('zoomable-image');
+
+            // Добавляем изображение в ячейку
+            photoCell.appendChild(img);
+
+            row.innerHTML = `
+            <td>${order.id}</td>
+            <td><a href="${order.link}">${order.link}</a></td>
+            <td>${order.amount}</td>
+            <td>${order.sumOfOrder}</td>
+            <td>${order.prepayment}</td>
+            <td>${photoCell.innerHTML}</td>
+            <td>${order.date}</td>
+            <td>${order.status}</td>
+            <td>${order.customerId}</td>
+        `;
+            tableBody.appendChild(row);
+        });
+
+        function createImageFromBase64(base64String) {
+            const img = new Image();
+            img.src = `data:image/jpeg;base64,${base64String}`; // Устанавливаем источник изображения
+            return img;
+        }
+    }
+</script>
+
+</body>
+</html>
