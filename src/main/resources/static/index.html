@@ -35,17 +35,25 @@
     <label for="sumOrder">Сумма заказа:</label>
     <input type="text" id="sumOrder" name="Сумма заказа, руб"><br><br>
     <label for="status">Статус:</label>
-    <input type="checkbox" id="status" name="Статус заказа"><br><br>
+    <select id="status" name="Статус заказа">
+        <option value="Принят">Принят</option>
+        <option value="На складе">На складе</option>
+        <option value="В обработке">В обработке</option>
+        <option value="Отправлен">Отправлен</option>
+        <option value="Завершен">Завершен</option>
+    </select><br><br>
     <button type="submit">Создать заказ</button>
 </form>
+
 <h2>Получить все заказы по фамилии заказчика</h2>
 <form action="/order/get-orders" method="get">
     <label for="surnameOfCustomer">Фамилия:</label>
     <input type="text" id="surnameOfCustomer" name="Фамилия"><br><br>
     <button type="submit">Получить</button>
 </form>
+
 <h2>Получить все заказы</h2>
-<form action="orders.html" method="get" target="_blank">
+<form action="orders.html" method="get">
     <button type="submit">Получить</button>
 </form>
 

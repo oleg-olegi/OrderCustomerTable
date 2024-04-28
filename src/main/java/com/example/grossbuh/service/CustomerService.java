@@ -1,7 +1,11 @@
 package com.example.grossbuh.service;
 
+import com.example.grossbuh.exceptions.CustomerNotFoundException;
 import com.example.grossbuh.model.Customer;
 import com.example.grossbuh.repository.CustomerRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 @org.springframework.stereotype.Service
 public class CustomerService {
@@ -16,5 +20,9 @@ public class CustomerService {
         Customer customer = new Customer(surname, name, phone);
 
         return customerRepository.save(customer);
+    }
+
+    public Customer getCustomerById(int customerId) {
+        return customerRepository.findById(Integer.toString(customerId)).get();
     }
 }

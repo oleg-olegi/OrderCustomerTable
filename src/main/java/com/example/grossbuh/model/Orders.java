@@ -1,5 +1,7 @@
 package com.example.grossbuh.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +12,7 @@ import java.util.Objects;
 @Component
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -23,24 +25,30 @@ public class Order {
     @Column(name = "prepayment")
     private BigDecimal prepayment;
     @Column(name = "photoData")
-
     private byte[] photoData;
     @Column(name = "date of order")
     private String date;
     @Column(name = "status")
-    private boolean status;
-
-    @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @JsonProperty
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
+    @Column(name = "customer_surname")
+    private String customerSurname;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    @JsonBackReference
     private Customer customer;
 
 
-    public Order() {
+    public Orders() {
     }
 
-    public Order(Customer customer, short amount, String date, String link, byte[] photoData,
-                 BigDecimal prepaid, boolean status, BigDecimal sumOrder) {
+    public Orders(Customer customer) {
         this.customer = customer;
+    }
+
+    public Orders(short amount, String date, String link, byte[] photoData,
+                  BigDecimal prepaid, StatusEnum status, BigDecimal sumOrder) {
         this.amount = amount;
         this.date = date;
         this.link = link;
@@ -51,18 +59,33 @@ public class Order {
     }
 
     @Override
+    public String toString() {
+        return "Orders{" +
+                "id=" + id +
+                ", link='" + link + '\'' +
+                ", amount=" + amount +
+                ", sumOfOrder=" + sumOfOrder +
+                ", prepayment=" + prepayment +
+                ", photoData=" + Arrays.toString(photoData) +
+                ", date='" + date + '\'' +
+                ", status='" + status + '\'' +
+                ", customerSurname='" + customerSurname + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return id == order.id
-                && amount == order.amount
-                && status == order.status
-                && Objects.equals(link, order.link)
-                && Objects.equals(sumOfOrder, order.sumOfOrder)
-                && Objects.equals(prepayment, order.prepayment)
-                && Arrays.equals(photoData, order.photoData)
-                && Objects.equals(date, order.date);
+        Orders orders = (Orders) o;
+        return id == orders.id
+                && amount == orders.amount
+                && Objects.equals(status, orders.status)
+                && Objects.equals(link, orders.link)
+                && Objects.equals(sumOfOrder, orders.sumOfOrder)
+                && Objects.equals(prepayment, orders.prepayment)
+                && Arrays.equals(photoData, orders.photoData)
+                && Objects.equals(date, orders.date);
     }
 
     @Override
@@ -70,6 +93,22 @@ public class Order {
         int result = Objects.hash(id, link, amount, sumOfOrder, prepayment, date, status);
         result = 31 * result + Arrays.hashCode(photoData);
         return result;
+    }
+
+    public Customer getCustomer() {
+        return this.customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public String getCustomerSurname() {
+        return customerSurname;
+    }
+
+    public void setCustomerSurname(String customerSurname) {
+        this.customerSurname = customerSurname;
     }
 
     public int getId() {
@@ -128,11 +167,11 @@ public class Order {
         this.date = date;
     }
 
-    public boolean isStatus() {
+    public StatusEnum isStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 }

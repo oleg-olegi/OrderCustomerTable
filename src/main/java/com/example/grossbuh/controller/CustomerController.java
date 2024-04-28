@@ -3,10 +3,9 @@ package com.example.grossbuh.controller;
 import com.example.grossbuh.model.Customer;
 import com.example.grossbuh.service.CustomerService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/customer")
 @RestController
@@ -23,5 +22,11 @@ public class CustomerController {
                                                    @RequestParam("Телефон") String phone) {
         Customer customer = customerService.createCustomer(surname, name, phone);
         return ResponseEntity.ok(customer);
+    }
+
+    @GetMapping("{customer_Id}")
+    @ResponseBody
+    public ResponseEntity<Customer> getCustomersByCustomerId(@PathVariable int customer_Id) {
+        return ResponseEntity.ok(customerService.getCustomerById(customer_Id));
     }
 }

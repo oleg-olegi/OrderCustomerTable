@@ -2,7 +2,8 @@ package com.example.grossbuh.service;
 
 import com.example.grossbuh.exceptions.CustomerNotFoundException;
 import com.example.grossbuh.model.Customer;
-import com.example.grossbuh.model.Order;
+import com.example.grossbuh.model.Orders;
+import com.example.grossbuh.model.StatusEnum;
 import com.example.grossbuh.repository.CustomerRepository;
 import com.example.grossbuh.repository.OrderRepository;
 import org.slf4j.Logger;
@@ -29,8 +30,8 @@ public class OrderService {
         this.customerRepository = customerRepository;
     }
 
-    public Order createOrder(int customerId, short amount, String date, String link, byte[] photo, BigDecimal prepaid,
-                             boolean status, BigDecimal sumOrder) throws IOException {
+    public Orders createOrder(int customerId, short amount, String date, String link, byte[] photo, BigDecimal prepaid,
+                              StatusEnum status, BigDecimal sumOrder) throws IOException {
         Optional<Customer> customerOptional = customerRepository.findById(Integer.toString(customerId));
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
@@ -40,8 +41,11 @@ public class OrderService {
             byte[] preview = generateImagePreview(photo);
 
             // Создаем заказ с полученными данными
-            Order order = new Order(customer, amount, date, link, preview, prepaid, status, sumOrder);
-
+            Orders order = new Orders(amount, date, link, preview, prepaid, status, sumOrder);
+            logger.info("Создан заказ {}", order);
+            //устанавливаем значение customer в таблицу
+            order.setCustomer(customer);
+            order.setCustomerSurname(customer.getSurname());
             // Сохраняем заказ
             return orderRepository.save(order);
         } else {
@@ -49,14 +53,14 @@ public class OrderService {
             throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
         }
     }
-    public List<Order> getOrdersByCustomerSurname(String surname) {
+
+    public List<Orders> getOrdersByCustomerSurname(String surname) {
         return orderRepository.findByCustomerSurname(surname)
                 .stream()
-                .flatMap(Optional::stream)
                 .toList();
     }
 
-    public List<Order> getAllOrders() {
+    public List<Orders> getAllOrders() {
         return orderRepository.findAll();
     }
 

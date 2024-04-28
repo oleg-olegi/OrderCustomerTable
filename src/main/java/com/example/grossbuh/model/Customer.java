@@ -3,8 +3,7 @@ package com.example.grossbuh.model;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 @Entity
