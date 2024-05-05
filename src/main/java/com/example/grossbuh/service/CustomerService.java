@@ -23,6 +23,28 @@ public class CustomerService {
     }
 
     public Customer getCustomerById(int customerId) {
-        return customerRepository.findById(Integer.toString(customerId)).get();
+        return customerRepository.findById(customerId).get();
+    }
+
+    public void deleteCustomer(int customerId) {
+        if (customerRepository.existsById(customerId)) {
+            customerRepository.deleteById(customerId);
+        }
+    }
+
+    public List<Customer> getAllCustomers() {
+        return customerRepository.findAll();
+    }
+
+    public void updateCustomer(int id, Customer customer) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(id);
+        if (optionalCustomer.isPresent()) {
+            Customer existedCustomer = optionalCustomer.get();
+            existedCustomer.setName(customer.getName());
+            existedCustomer.setSurname(customer.getSurname());
+            existedCustomer.setPhone(customer.getPhone());
+            customerRepository.save(existedCustomer);
+        }
     }
 }
+

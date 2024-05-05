@@ -1,6 +1,7 @@
 package com.example.grossbuh.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -17,6 +18,8 @@ public class Customer {
     @Column(name = "name")
     private String name;
     @Column(name = "phone")
+    @Pattern(regexp = "^\\+?\\d{3}\\s?\\d{2,3}\\s?\\d{2,3}\\s?\\d{2,3}$",
+            message = "Введите номер телефона в правильном формате")
     private String phone;
 
     public Customer() {

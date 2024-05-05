@@ -29,4 +29,27 @@ public class CustomerController {
     public ResponseEntity<Customer> getCustomersByCustomerId(@PathVariable int customer_Id) {
         return ResponseEntity.ok(customerService.getCustomerById(customer_Id));
     }
+
+    @GetMapping("/get_all")
+    @ResponseBody
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        List<Customer> customerList = customerService.getAllCustomers();
+        return ResponseEntity.ok(customerList);
+    }
+
+    @GetMapping("/update")
+    public ResponseEntity<String> updateCustomer(@RequestParam int id,
+                                                 @RequestParam String name,
+                                                 @RequestParam String surname,
+                                                 @RequestParam String phone) {
+        Customer updatedCustomer = new Customer(surname, name, phone);
+        customerService.updateCustomer(id, updatedCustomer);
+        return ResponseEntity.ok("Заказчик успешно обновлен");
+    }
+
+    @GetMapping("/delete")
+    public ResponseEntity<String> deleteCustomer(@RequestParam int customer_Id) {
+        customerService.deleteCustomer(customer_Id);
+        return ResponseEntity.ok("Заказчик успешно удален");
+    }
 }

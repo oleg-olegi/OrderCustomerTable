@@ -32,7 +32,7 @@ public class OrderService {
 
     public Orders createOrder(int customerId, short amount, String date, String link, byte[] photo, BigDecimal prepaid,
                               StatusEnum status, BigDecimal sumOrder) throws IOException {
-        Optional<Customer> customerOptional = customerRepository.findById(Integer.toString(customerId));
+        Optional<Customer> customerOptional = customerRepository.findById(customerId);
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
             logger.info("Найден заказчик {} ", customer);
