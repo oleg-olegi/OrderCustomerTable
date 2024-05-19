@@ -31,7 +31,14 @@
     </style>
 </head>
 <body>
-<h1>Список заказов</h1>
+<h1>Список заказов по фамилии</h1>
+
+<form id="surnameForm">
+    <label for="surnameInput">Введите фамилию заказчика:</label>
+    <input type="text" id="surnameInput" name="surname" required>
+    <button type="submit">Поиск</button>
+</form>
+
 <table>
     <thead>
     <tr>
@@ -52,9 +59,10 @@
 </table>
 
 <script>
-    // Получение данных заказов с сервера при загрузке страницы
-    window.addEventListener('DOMContentLoaded', () => {
-        fetch('/order/get-all-orders') // Путь к вашему серверному обработчику
+    document.getElementById('surnameForm').addEventListener('submit', event => {
+        event.preventDefault();
+        const surname = document.getElementById('surnameInput').value;
+        fetch(`/order/get-orders?surname=${surname}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -62,30 +70,32 @@
                 return response.json();
             })
             .then(data => {
-                // Вызов функции для отображения данных в таблице
                 displayOrders(data);
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
+                // Добавляем обработку ошибки
+                const tableBody = document.querySelector('tbody');
+                tableBody.innerHTML = ''; // Очищаем содержимое таблицы
+                const errorMessageRow = document.createElement('tr');
+                const errorMessageCell = document.createElement('td');
+                errorMessageCell.setAttribute('colspan', '9'); // Устанавливаем colspan, чтобы сообщение об ошибке занимало всю ширину таблицы
+                errorMessageCell.textContent = 'Произошла ошибка при загрузке данных. Пожалуйста, попробуйте еще раз.';
+                errorMessageRow.appendChild(errorMessageCell);
+                tableBody.appendChild(errorMessageRow);
             });
     });
 
-    // Функция для отображения данных заказов в таблице
     function displayOrders(orders) {
         const tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = '';
 
         orders.forEach(order => {
             const row = document.createElement('tr');
-            const photoData = order.photoData;
             const photoCell = document.createElement('td');
 
-            // Создаем изображение из строки Base64
-            const img = createImageFromBase64(photoData);
-
-            // Добавляем класс для стилизации и указываем курсор
+            const img = createImageFromBase64(order.photoData);
             img.classList.add('zoomable-image');
-
-            // Добавляем изображение в ячейку
             photoCell.appendChild(img);
 
             row.innerHTML = `
@@ -101,12 +111,12 @@
         `;
             tableBody.appendChild(row);
         });
+    }
 
-        function createImageFromBase64(base64String) {
-            const img = new Image();
-            img.src = `data:image/jpeg;base64,${base64String}`; // Устанавливаем источник изображения
-            return img;
-        }
+    function createImageFromBase64(base64String) {
+        const img = new Image();
+        img.src = `data:image/jpeg;base64,${base64String}`;
+        return img;
     }
 </script>
 

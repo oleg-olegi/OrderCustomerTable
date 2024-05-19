@@ -31,14 +31,14 @@ public class OrderService {
     }
 
     public Orders createOrder(int customerId, short amount, String date, String link, byte[] photo, BigDecimal prepaid,
-                              StatusEnum status, BigDecimal sumOrder) throws IOException {
+                              StatusEnum status, BigDecimal sumOrder, String fileName) throws IOException {
         Optional<Customer> customerOptional = customerRepository.findById(customerId);
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
             logger.info("Найден заказчик {} ", customer);
 
             // Создаем превью для фото
-            byte[] preview = generateImagePreview(photo);
+            byte[] preview = generateImagePreview(photo, fileName);
 
             // Создаем заказ с полученными данными
             Orders order = new Orders(amount, date, link, preview, prepaid, status, sumOrder);
@@ -55,16 +55,20 @@ public class OrderService {
     }
 
     public List<Orders> getOrdersByCustomerSurname(String surname) {
-        return orderRepository.findByCustomerSurname(surname)
-                .stream()
-                .toList();
+        Optional<Customer> existingCustomer = customerRepository.findBySurname(surname);
+        if (existingCustomer.isPresent()) {
+            return orderRepository.findByCustomerSurname(surname)
+                    .stream()
+                    .toList();
+        }
+        throw new CustomerNotFoundException("Заказчик с такой фамилией не существует");
     }
 
     public List<Orders> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    private byte[] generateImagePreview(byte[] imageBytes) throws IOException {
+    private byte[] generateImagePreview(byte[] imageBytes, String fileName) throws IOException {
         try (InputStream is = new ByteArrayInputStream(imageBytes);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -85,12 +89,24 @@ public class OrderService {
 
             // Записываем превью в ByteArrayOutputStream с использованием того
             // же формата, что и исходное изображение
-            ImageIO.write(preview, "jpg", baos);
+            ImageIO.write(preview, getFormat(fileName), baos);
 
             // Возвращаем массив байт превью
             return baos.toByteArray();
         } catch (IOException e) {
             throw e;
         }
+    }
+
+    private String getFormat(String fileName) {
+        try {
+            int dotIndex = fileName.lastIndexOf('.');
+            if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
+                return fileName.substring(dotIndex + 1).toLowerCase();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "jpg";
     }
 }

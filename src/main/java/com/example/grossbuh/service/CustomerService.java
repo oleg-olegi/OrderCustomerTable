@@ -27,7 +27,10 @@ public class CustomerService {
     }
 
     public Customer getCustomerById(int customerId) {
-        return customerRepository.findById(customerId).get();
+        if (customerRepository.findById(customerId).isPresent()) {
+            return customerRepository.findById(customerId).get();
+        }
+        throw new CustomerNotFoundException("Заказчик с указанным ID не найден");
     }
 
     @Transactional
@@ -44,17 +47,26 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public void updateCustomer(int id, Customer customer) {
+    public void updateCustomer(int id, String name, String surname, String phone) {
         Optional<Customer> optionalCustomer = customerRepository.findById(id);
         if (optionalCustomer.isPresent()) {
-            Customer existedCustomer = optionalCustomer.get();
-            existedCustomer.setName(customer.getName());
-            existedCustomer.setSurname(customer.getSurname());
-            existedCustomer.setPhone(customer.getPhone());
-            customerRepository.save(existedCustomer);
-        } else {
-            throw new CustomerNotFoundException("Заказчик с указанным ID не найден");
+            Customer existingCustomer = optionalCustomer.get();
+            boolean needsUpdate = false;
+            if (name != null && !name.trim().isEmpty()) {
+                existingCustomer.setName(name);
+                needsUpdate = true;
+            }
+            if (surname != null && !surname.trim().isEmpty()) {
+                existingCustomer.setSurname(surname);
+                needsUpdate = true;
+            }
+            if (phone != null && !phone.trim().isEmpty()) {
+                existingCustomer.setPhone(phone);
+                needsUpdate = true;
+            }
+            if (needsUpdate) {
+                customerRepository.save(existingCustomer);
+            }
         }
     }
 }
-

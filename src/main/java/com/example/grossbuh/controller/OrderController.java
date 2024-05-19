@@ -1,9 +1,11 @@
 package com.example.grossbuh.controller;
 
+import com.example.grossbuh.exceptions.CustomerNotFoundException;
 import com.example.grossbuh.model.Orders;
 import com.example.grossbuh.model.StatusEnum;
 import com.example.grossbuh.service.OrderService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,16 +36,25 @@ public class OrderController {
             @RequestParam("Статус заказа") String status) throws IOException {
 
         byte[] photoBytes = photoFile.getBytes();
+        String fileName = photoFile.getOriginalFilename();
+
 
         Orders order = orderService.createOrder(customerId, amount, date, link, photoBytes, prepaid,
-                StatusEnum.fromText(status), sumOrder);
+                StatusEnum.fromText(status), sumOrder, fileName);
         return ResponseEntity.ok(order);
     }
 
     @GetMapping(value = "/get-orders")
-    public ResponseEntity<List<Orders>> getOrdersBySurname(@RequestParam("Фамилия") String surname) {
-        List<Orders> orders = orderService.getOrdersByCustomerSurname(surname);
-        return ResponseEntity.ok(orders);
+    public ResponseEntity<?> getOrdersBySurname(@RequestParam("surname") String surname) {
+        try {
+            List<Orders> orders = orderService.getOrdersByCustomerSurname(surname);
+            if (orders.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Список заказов клиента пуст");
+            }
+            return ResponseEntity.ok(orders);
+        } catch (CustomerNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Заказчика с такой фамилией не существует");
+        }
     }
 
     @GetMapping(value = "/get-all-orders")

@@ -45,8 +45,7 @@ public class CustomerController {
                                                  @RequestParam String surname,
                                                  @RequestParam String phone) {
         try {
-            Customer updatedCustomer = new Customer(surname, name, phone);
-            customerService.updateCustomer(id, updatedCustomer);
+            customerService.updateCustomer(id, name, surname, phone);
             return ResponseEntity.ok("Заказчик успешно обновлен");
         } catch (CustomerNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Заказчик с указанным ID не найден");
