@@ -2,6 +2,7 @@ package com.example.grossbuh.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
+import org.hibernate.annotations.Cascade;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -9,6 +10,7 @@ import java.util.*;
 @Component
 @Entity
 @Table(name = "customers")
+
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,7 +1,9 @@
 package com.example.grossbuh.controller;
 
+import com.example.grossbuh.exceptions.CustomerNotFoundException;
 import com.example.grossbuh.model.Customer;
 import com.example.grossbuh.service.CustomerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,14 +44,22 @@ public class CustomerController {
                                                  @RequestParam String name,
                                                  @RequestParam String surname,
                                                  @RequestParam String phone) {
-        Customer updatedCustomer = new Customer(surname, name, phone);
-        customerService.updateCustomer(id, updatedCustomer);
-        return ResponseEntity.ok("Заказчик успешно обновлен");
+        try {
+            Customer updatedCustomer = new Customer(surname, name, phone);
+            customerService.updateCustomer(id, updatedCustomer);
+            return ResponseEntity.ok("Заказчик успешно обновлен");
+        } catch (CustomerNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Заказчик с указанным ID не найден");
+        }
     }
 
-    @GetMapping("/delete")
-    public ResponseEntity<String> deleteCustomer(@RequestParam int customer_Id) {
-        customerService.deleteCustomer(customer_Id);
-        return ResponseEntity.ok("Заказчик успешно удален");
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteCustomer(@RequestParam("customer_Id") int customerId) {
+        try {
+            customerService.deleteCustomer(customerId);
+            return ResponseEntity.ok("Заказчик успешно удален");
+        } catch (CustomerNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Заказчик с указанным ID не найден");
+        }
     }
 }

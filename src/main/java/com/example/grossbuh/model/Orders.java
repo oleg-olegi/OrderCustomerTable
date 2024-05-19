@@ -3,15 +3,18 @@ package com.example.grossbuh.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 
 @Component
 @Entity
 @Table(name = "orders")
+
 public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,8 +40,8 @@ public class Orders {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     @JsonBackReference
+    @Cascade(org.hibernate.annotations.CascadeType.REMOVE)
     private Customer customer;
-
 
     public Orders() {
     }
