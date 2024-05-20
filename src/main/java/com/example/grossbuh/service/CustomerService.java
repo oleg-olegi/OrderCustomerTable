@@ -20,9 +20,7 @@ public class CustomerService {
     }
 
     public Customer createCustomer(String surname, String name, String phone) {
-
         Customer customer = new Customer(surname, name, phone);
-
         return customerRepository.save(customer);
     }
 
@@ -67,6 +65,8 @@ public class CustomerService {
             if (needsUpdate) {
                 customerRepository.save(existingCustomer);
             }
+        } else {
+            throw new CustomerNotFoundException("Заказчик с id {} " + id + " не найден");
         }
     }
 }

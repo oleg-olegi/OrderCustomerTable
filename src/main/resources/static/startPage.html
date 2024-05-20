@@ -4,9 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order and Customer Management</title>
+    <style>
+        .button-container {
+            display: flex;
+            gap: 10px; /* Расстояние между кнопками */
+        }
+    </style>
 </head>
 <body>
 <h1>Управление заказами и клиентами</h1>
+
 <h2>Добавить заказчика</h2>
 <form action="/customer/create" method="post">
     <label for="surname">Фамилия:</label>
@@ -15,13 +22,18 @@
     <input type="text" id="name" name="Имя"><br><br>
     <label for="phone">Телефон:</label>
     <input type="text" id="phone" name="Телефон"><br><br>
-    <button type="submit">Добавть заказчика</button>
+    <button type="submit">Добавить заказчика</button>
 </form>
 
 <h2>Управление заказчиками</h2>
-<form action="editCustomers.html" method="get">
-    <button type="submit">Перейти</button>
-</form>
+<div class="button-container">
+    <form action="editCustomers.html" method="get">
+        <button type="submit">Перейти</button>
+    </form>
+    <form action="getAllCustomers.html" method="get">
+        <button type="submit">Получить всех заказчиков</button>
+    </form>
+</div>
 
 <h2>Создать заказ</h2>
 <form action="/order/create" method="post" enctype="multipart/form-data">

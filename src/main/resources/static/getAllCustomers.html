@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Получить всех заказчиков</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<h1>Список всех заказчиков</h1>
+<table id="customersTable" style="display: none;">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Телефон</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Здесь будут данные заказчиков -->
+    </tbody>
+</table>
+
+<script>
+    // Запрашиваем всех заказчиков при загрузке страницы
+    window.addEventListener('DOMContentLoaded', () => {
+        fetch('customer/get_all')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(customers => {
+                displayCustomers(customers);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    });
+
+    function displayCustomers(customers) {
+        const table = document.getElementById('customersTable');
+        const tableBody = table.querySelector('tbody');
+        tableBody.innerHTML = ''; // Очищаем таблицу
+
+        customers.forEach(customer => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                    <td>${customer.id}</td>
+                    <td>${customer.surname}</td>
+                    <td>${customer.name}</td>
+                    <td>${customer.phone}</td>
+                `;
+            tableBody.appendChild(row);
+        });
+
+        table.style.display = 'table'; // Показываем таблицу
+    }
+</script>
+</body>
+</html>

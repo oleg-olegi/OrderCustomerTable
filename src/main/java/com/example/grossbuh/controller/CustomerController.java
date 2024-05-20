@@ -48,6 +48,7 @@ public class CustomerController {
             customerService.updateCustomer(id, name, surname, phone);
             return ResponseEntity.ok("Заказчик успешно обновлен");
         } catch (CustomerNotFoundException e) {
+            System.err.println("Ошибка обновления заказчика: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Заказчик с указанным ID не найден");
         }
     }
